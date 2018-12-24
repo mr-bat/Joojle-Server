@@ -4,19 +4,20 @@ const User = require('../models/User');
 const create = async (req, res, next) => {
 
     let ownerId = req.body.ownerId;
-    let participantEmails = req.body.participants;
+    let participantEmails = req.body.participantEmails;
     let title = req.body.title;
     let description = req.body.description;
 
     try {
-
+        console.log(participantEmails);
         let participants = await User.find({
             'email': {$in: participantEmails}
         });
 
+        console.log(participants);
 
         event = new Event({
-            ownerId,
+            owner: ownerId,
             title,
             description,
             participants
