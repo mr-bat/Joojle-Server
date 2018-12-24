@@ -21,14 +21,24 @@ class Poll extends Model {
 
     static get relationMappings() {
         const Event = require('./Event');
+        const PollItem = require('./PollItem');
 
         return {
             event: {
                 relation: Model.BelongsToOneRelation,
                 modelClass: Event,
                 join: {
-                    from: 'polls.event',
+                    from: 'polls.eventId',
                     to: 'events.id'
+                }
+            },
+
+            items: {
+                relation: Model.HasManyRelation,
+                modelClass: PollItem,
+                join: {
+                    from: 'polls.id',
+                    to: 'pollItems.pollId'
                 }
             }
         }

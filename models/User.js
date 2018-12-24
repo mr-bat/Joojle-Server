@@ -18,10 +18,25 @@ class User extends Model {
 
             properties: {
                 id: {type: 'integer'},
-                username: {type: ['string', 'null']},
+                username: {type: 'string'},
                 email: {type: 'string'},
             }
         };
+    }
+
+    static get relationMappings() {
+        const Event = require('./Event');
+
+        return {
+            events: {
+                relation: Model.HasManyRelation,
+                modelClass: Event,
+                join: {
+                    from: 'users.id',
+                    to: 'events.creator'
+                }
+            },
+        }
     }
 
 }

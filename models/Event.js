@@ -24,14 +24,6 @@ class Event extends Model {
         const User = require('./User');
 
         return {
-            creator: {
-                relation: Model.HasManyRelation,
-                modelClass: User,
-                join: {
-                    from: 'events.creator',
-                    to: 'users.id'
-                }
-            },
 
             participants: {
                 relation: Model.ManyToManyRelation,
