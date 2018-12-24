@@ -1,4 +1,6 @@
-const User = require('../models/User');
+const jwtDecode = require('jwt-decode');
+const jwt       = require('jsonwebtoken');
+const User      = require('../models/User');
 
 const signUp = async (req, res, next) => {
     let username = req.body.username;
@@ -25,14 +27,20 @@ const signUp = async (req, res, next) => {
 };
 
 const signIn = async (req, res, next) => {
-    let username = req.body.username;
+    let email = req.body.email;
     try {
-        let user = await User.findOne({username});
+        let user = await User.findOne({email});
         // TODO: set cookie
         if(user) {
-            res.send({
+            let token = jwt.sign({
+                uid: user._id.toString()
+            }, "SuperSecret", {
+                expiresIn: "10d" // expires in 24 hours
+            });
+            res.json({
                 success: true,
-                user
+                message: 'Enjoy your token!',
+                token: token,
             });
         } else {
             res.status(404).send({
