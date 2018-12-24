@@ -1,36 +1,15 @@
+const mongoose 			= require('mongoose');
+const Schema 	 		= mongoose.Schema;
 
-const { Model } = require('objection');
-
-class Vote extends Model {
-
-    static get tableName() {
-        return 'Vote';
+let VoteSchema = new Schema({
+    verdict: String,
+    pollItem: {
+        type: Schema.Types.ObjectId,
+        ref: 'PollItem'
     }
+}, {
+    timestamps: true
+});
 
-    static get jsonSchema () {
-        return {
-            type: 'object',
-
-            properties: {
-                id: {type: 'integer'},
-                verdict: {type: 'string'},
-            }
-        };
-    }
-
-    static get relationMappings() {
-        const User = require('./User');
-
-        return {
-            voter: {
-                relation: Model.BelongsToOneRelation,
-                modelClass: User,
-                join: {
-                    from: 'votes.voterId',
-                    to: 'users.id'
-                }
-            }
-        }
-    }
-
-}
+const VoteModel = mongoose.model('Vote', VoteSchema);
+module.exports = VoteModel;

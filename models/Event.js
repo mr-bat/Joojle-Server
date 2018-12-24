@@ -1,43 +1,20 @@
+const mongoose 			= require('mongoose');
+const Schema 	 		= mongoose.Schema;
 
-const { Model } = require('objection');
+let EventSchema = new Schema({
+    title: String,
+    description: String,
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    participants: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
+}, {
+    timestamps: true
+});
 
-class Event extends Model {
-
-    static get tableName() {
-        return 'Event';
-    }
-
-    static get jsonSchema () {
-        return {
-            type: 'object',
-            required: ['title'],
-
-            properties: {
-                id: {type: 'integer'},
-                title: {type: 'string'},
-                description: {type: 'string'},
-            }
-        };
-    }
-
-    static get relationMappings() {
-        const User = require('./User');
-
-        return {
-
-            participants: {
-                relation: Model.ManyToManyRelation,
-                modelClass: User,
-                join: {
-                    from: 'events.id',
-                    through: {
-                        from: 'events_users.eventId',
-                        to: 'events_users.userId'
-                    },
-                    to: 'users.id'
-                }
-            }
-        }
-    }
-
-}
+const EventModel = mongoose.model('Event', EventSchema);
+module.exports = EventModel;

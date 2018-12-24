@@ -3,8 +3,28 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const mongoose          = require('mongoose');
+
+// const { Model } = require('objection');
+// const Knex = require('knex');
+
+// const knex = Knex({
+//   client: 'pg',
+//   connection: {
+//     host : 'manny.db.elephantsql.com',
+//     user : 'yolkyohh',
+//     password : 'sf1jiIoH41NTjGh6z1aaflOB4b09aJ5P',
+//     database : 'yolkyohh'
+//   }
+// });
+
+// Model.knex(knex);
 
 const app = express();
+
+const db = mongoose.connection;
+mongoose.connect('mongodb://127.0.0.1:27017/joojle'); // connect to our database based on environment
+db.on('error', console.error.bind(console, 'connection error:'));
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
