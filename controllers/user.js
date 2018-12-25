@@ -37,11 +37,12 @@ const signIn = async (req, res, next) => {
             }, "SuperSecret", {
                 expiresIn: "10d" // expires in 24 hours
             });
-            res.json({
-                success: true,
-                message: 'Enjoy your token!',
-                token: token,
-            });
+            res.header('token', token).redirect('http://localhost:3001/hompage.html');
+            // res.json({
+            //     success: true,
+            //     message: 'Enjoy your token!',
+            //     token: token,
+            // });
         } else {
             res.status(404).send({
                 success: false,

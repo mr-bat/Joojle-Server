@@ -5,6 +5,6 @@ const possibleVotes = {
 };
 
 
-module.exports({
+module.exports = {
     possibleVotes
-});
+};
