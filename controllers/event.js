@@ -2,16 +2,23 @@ const Poll  = require('../models/Poll');
 const Event = require('../models/Event');
 const User  = require('../models/User');
 const PollItem = require('../models/PollItem');
+const Mail = require('../controllers/mail');
 
 const create = async (req, res, next) => {
     let participantEmails = req.body.participantEmails;
     let title = req.body.title;
     let description = req.body.description;
+    let pollTimes = req.body.pollTimes;
 
     try {
+
+        console.log("wtf");
+
         let participants = await User.find({
             'email': {$in: participantEmails}
         });
+
+        console.log(participants);
         event = new Event({
             owner: req.User,
             title,
@@ -21,10 +28,30 @@ const create = async (req, res, next) => {
 
         await event.save();
 
+        let poll = new Poll({description: title, status: 'Open', event});
+        await poll.save();
+
+        console.log(poll);
+
+        let pollItems = [];
+        for (let timeItem of pollTimes){
+            let pollItem = new PollItem({
+                startDate: timeItem[0],
+                endDate: timeItem[1],
+                poll
+            });
+            pollItems.push(pollItem);
+        }
+
+        await PollItem.insertMany(pollItems);
+        await Mail.sendMail(poll, participants);
+
         res.send({
             success: true,
             message: 'Event has been added successfully.',
-            event
+            event,
+            poll,
+            pollItems
         });
     } catch (e) {
         res.status(500).send({

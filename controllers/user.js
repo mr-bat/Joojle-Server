@@ -15,6 +15,7 @@ const signUp = async (req, res, next) => {
         await user.save();
         res.redirect('http://localhost:9080/Login/index.html');
     } catch (e) {
+        console.log(e);
         res.status(500).send({
             success: false,
             message: 'Internal server error.'

@@ -6,6 +6,7 @@ const User  = require('../models/User');
 const Vote = require('../models/Vote');
 const voteController = require('./vote');
 
+
 const create = async (req, res, next) => {
     const {description, event} = req.body;
     let poll = new Poll({description, status: 'Open', event});
@@ -43,7 +44,7 @@ const vote = async (req, res, next) => {
            pollItem, voter
         }).populate('pollItem');
 
-        if (previousVote === 'undefined') {
+        if (previousVote === null) {
             let newVote = new Vote({
                 pollItem,
                 voter,
@@ -51,13 +52,13 @@ const vote = async (req, res, next) => {
             });
             await newVote.save();
 
-            if (previousVote.pollItem.verdict === voteController.possibleVotes.DECLINE) {
+            if (verdict === voteController.possibleVotes.DECLINE) {
                 await pollItem.update({
                     $inc: {
                         declineCount: 1
                     }
                 });
-            } else if (previousVote.pollItem.verdict === voteController.possibleVotes.ACCEPT) {
+            } else if (verdict === voteController.possibleVotes.ACCEPT) {
                 await pollItem.update({
                     $inc: {
                         acceptCount: 1
