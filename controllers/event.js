@@ -12,13 +12,10 @@ const create = async (req, res, next) => {
 
     try {
 
-        console.log("wtf");
-
         let participants = await User.find({
             'email': {$in: participantEmails}
         });
 
-        console.log(participants);
         event = new Event({
             owner: req.User,
             title,
@@ -31,8 +28,6 @@ const create = async (req, res, next) => {
         let poll = new Poll({description: title, status: 'Open', event});
         await poll.save();
 
-        console.log(poll);
-
         let pollItems = [];
         for (let timeItem of pollTimes){
             let pollItem = new PollItem({
@@ -44,7 +39,7 @@ const create = async (req, res, next) => {
         }
 
         await PollItem.insertMany(pollItems);
-        await Mail.sendMail(poll, participants);
+        await Mail.sendMail(poll, participants.map(p => p.email));
 
         res.send({
             success: true,
