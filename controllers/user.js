@@ -44,10 +44,7 @@ const signIn = async (req, res, next) => {
             //     token: token,
             // });
         } else {
-            res.status(404).send({
-                success: false,
-                message: 'User not found.'
-            })
+            res.status(403).redirect('http://localhost:9080/Login/index.html');
         }
     } catch (e) {
         res.status(500).send({
