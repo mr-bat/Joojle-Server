@@ -34,11 +34,6 @@ const signIn = async (req, res, next) => {
                 expiresIn: "10d" // expires in 24 hours
             });
             res.cookie('token', token).redirect('http://localhost:3001/hompage.html');
-            // res.json({
-            //     success: true,
-            //     message: 'Enjoy your token!',
-            //     token: token,
-            // });
         } else {
             res.status(403).redirect('http://localhost:9080/Login/index.html');
         }

@@ -32,6 +32,22 @@ const create = async (req, res, next) => {
     }
 };
 
+const read = async (req, res, next) => {
+    try {
+        let events = await Event.find({owner: req.User});
+        res.send({
+            success: true,
+            events
+        });
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
 module.exports = {
-    create
+    create,
+    read
 };
