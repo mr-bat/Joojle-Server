@@ -64,7 +64,8 @@ const read = async (req, res, next) => {
             let poll        = await Poll.findOne({event});
             let pollItems   = await PollItem.find({poll});
             result.push(Object.assign(event, {
-                pollItems
+                pollItems,
+                poll
             }));
         }
         res.send({
