@@ -59,14 +59,16 @@ const create = async (req, res, next) => {
 const read = async (req, res, next) => {
     try {
         let result = [];
-        let events = await Event.find({owner: req.User});
+        let events = await Event.find({owner: req.User}).populate('participants');
         for (let event of events) {
             let poll        = await Poll.findOne({event});
             let pollItems   = await PollItem.find({poll});
-            result.push(Object.assign(event, {
-                pollItems,
-                poll
-            }));
+            result.push({
+                event,
+                status: poll.status,
+                acceptCount: pollItems.acceptCount,
+                declineCount: pollItems.declineCount,
+            });
         }
         res.send({
             success: true,
