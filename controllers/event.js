@@ -1,5 +1,7 @@
+const Poll  = require('../models/Poll');
 const Event = require('../models/Event');
-const User = require('../models/User');
+const User  = require('../models/User');
+const PollItem = require('../models/PollItem');
 
 const create = async (req, res, next) => {
     let participantEmails = req.body.participantEmails;
@@ -34,10 +36,18 @@ const create = async (req, res, next) => {
 
 const read = async (req, res, next) => {
     try {
+        let result = [];
         let events = await Event.find({owner: req.User});
+        for (let event of events) {
+            let poll        = await Poll.findOne({event});
+            let pollItems   = await PollItem.find({poll});
+            result.push(Object.assign(event), {
+                pollItems
+            });
+        }
         res.send({
             success: true,
-            events
+            result
         });
     } catch (e) {
         res.status(500).send({
