@@ -13,11 +13,7 @@ const signUp = async (req, res, next) => {
 
     try {
         await user.save();
-        res.send({
-            success: true,
-            message: 'User has been added successfully.',
-            user
-        });
+        res.redirect('http://localhost:9080/Login/index.html');
     } catch (e) {
         res.status(500).send({
             success: false,
