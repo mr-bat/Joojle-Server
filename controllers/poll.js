@@ -1,10 +1,11 @@
-const Mail  = require('./mail');
-const Poll  = require('../models/Poll');
-const PollItem  = require('../models/PollItem');
-const Event = require('../models/Event');
-const User  = require('../models/User');
-const Vote = require('../models/Vote');
-const voteController = require('./vote');
+const Mail              = require('./mail');
+const Poll              = require('../models/Poll');
+const Event             = require('../models/Event');
+const User              = require('../models/User');
+const Vote              = require('../models/Vote');
+const PollItem          = require('../models/PollItem');
+const voteController    = require('./vote');
+const warningController = require('./warning');
 
 
 const create = async (req, res, next) => {
@@ -12,7 +13,6 @@ const create = async (req, res, next) => {
     let poll = new Poll({description, status: 'Open', event});
     try {
         await poll.save();
-        // TODO: Send Mail
         let e = await Event.findById(event);
         let participants = await User.find({
             _id: {$in: e.participants}
@@ -37,7 +37,7 @@ const vote = async (req, res, next) => {
     const voter = req.body.voterId;
 
     //TODO: check if voter is an event participant
-
+    let pi = await PollItem.findById(pollItem);
     try {
 
         let previousVote = await Vote.findOne({
@@ -50,7 +50,6 @@ const vote = async (req, res, next) => {
                 voter,
                 verdict
             });
-            await newVote.save();
 
             if (verdict === voteController.possibleVotes.DECLINE) {
                 await pollItem.update({
@@ -59,12 +58,21 @@ const vote = async (req, res, next) => {
                     }
                 });
             } else if (verdict === voteController.possibleVotes.ACCEPT) {
+                let check = await warningController(pi.startDate, pi.endDate, req.User);
+                if(check.success) {
+                    return res.status(400).send({
+                        success: false,
+                        message: 'You have an overlapping event.',
+                        ovelappingEvent: check.overlappingEvent
+                    })
+                }
                 await pollItem.update({
                     $inc: {
                         acceptCount: 1
                     }
                 });
             }
+            await newVote.save();
 
         } else {
             if (previousVote.verdict === voteController.possibleVotes.ACCEPT){
@@ -78,6 +86,14 @@ const vote = async (req, res, next) => {
                 }
             } else if(previousVote.verdict === voteController.possibleVotes.DECLINE) {
                 if (previousVote.pollItem.verdict === voteController.possibleVotes.ACCEPT) {
+                    let check = await warningController(pi.startDate, pi.endDate, req.User);
+                    if(check.success) {
+                        return res.status(400).send({
+                            success: false,
+                            message: 'You have an overlapping event.',
+                            ovelappingEvent: check.overlappingEvent
+                        })
+                    }
                     await pollItem.update({
                         $inc: {
                             acceptCount: 1,
@@ -87,8 +103,6 @@ const vote = async (req, res, next) => {
                 }
             }
         }
-
-
         res.send({
             success: true,
             message: 'Your vote has been updated',
@@ -102,8 +116,6 @@ const vote = async (req, res, next) => {
         });
     }
 };
-
-
 
 module.exports = {
     create,
