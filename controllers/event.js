@@ -65,9 +65,11 @@ const read = async (req, res, next) => {
             let pollItems   = await PollItem.find({poll});
             result.push({
                 event,
-                status: poll.status,
-                acceptCount: pollItems.acceptCount,
-                declineCount: pollItems.declineCount,
+                poll,
+                pollItems
+                // status: poll.status,
+                // acceptCount: pollItems.acceptCount,
+                // declineCount: pollItems.declineCount,
             });
         }
         res.send({
