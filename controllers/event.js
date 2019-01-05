@@ -61,7 +61,7 @@ const create = async (req, res, next) => {
 const read = async (req, res, next) => {
     try {
         let result = [];
-        let events = await Event.find({owner: req.User}).populate('participants');
+        let events = await Event.find({owner: req.User}).populate('owner').populate('participants');
         for (let event of events) {
             let poll        = await Poll.findOne({event});
             let pollItems   = await PollItem.find({poll});
