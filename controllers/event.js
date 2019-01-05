@@ -41,6 +41,7 @@ const create = async (req, res, next) => {
         await PollItem.insertMany(pollItems);
         await Mail.sendMail(poll, participants.map(p => p.email));
 
+        event.owner = req.User;
         res.send({
             success: true,
             message: 'Event has been added successfully.',
