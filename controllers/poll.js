@@ -51,7 +51,6 @@ const vote = async (req, res, next) => {
                 verdict
             });
             await newVote.save();
-
             if (verdict === voteController.possibleVotes.DECLINE) {
                 await PollItem.update({_id: pollItem}, {
                     $inc: {
@@ -68,7 +67,7 @@ const vote = async (req, res, next) => {
 
         } else {
             if (previousVote.verdict === voteController.possibleVotes.ACCEPT){
-                if (previousVote.pollItem.verdict === voteController.possibleVotes.DECLINE) {
+                if (verdict === voteController.possibleVotes.DECLINE) {
                     await PollItem.update({_id: pollItem}, {
                         $inc: {
                             acceptCount: -1,
@@ -77,7 +76,7 @@ const vote = async (req, res, next) => {
                     });
                 }
             } else if(previousVote.verdict === voteController.possibleVotes.DECLINE) {
-                if (previousVote.pollItem.verdict === voteController.possibleVotes.ACCEPT) {
+                if (verdict === voteController.possibleVotes.ACCEPT) {
                     await PollItem.update({_id: pollItem}, {
                         $inc: {
                             acceptCount: 1,
