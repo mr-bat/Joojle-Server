@@ -34,7 +34,7 @@ const create = async (req, res, next) => {
 const vote = async (req, res, next) => {
     const verdict = req.body.verdict;
     const pollItem = req.body.pollItemId;
-    const voter = req.body.voterId;
+    const voter = req.User;
 
     //TODO: check if voter is an event participant
 
