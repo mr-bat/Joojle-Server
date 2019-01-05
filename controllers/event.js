@@ -20,7 +20,8 @@ const create = async (req, res, next) => {
             owner: req.User,
             title,
             description,
-            participants
+            participants,
+            state: 'Open'
         });
 
         await event.save();
@@ -85,7 +86,29 @@ const read = async (req, res, next) => {
     }
 };
 
+const close = async (req, res, next) => {
+    const eventId = req.body.eventId;
+    try {
+        await Event.updateOne({_id: eventId}, {
+            $set: {
+                state: 'Closed'
+            }
+        });
+        res.status(200).send({
+            success: true,
+            message: 'Event has been successfully finalized.'
+        })
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+
+};
+
 module.exports = {
     create,
-    read
+    read,
+    close
 };
