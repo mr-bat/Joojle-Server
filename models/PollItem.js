@@ -15,7 +15,11 @@ let PollItemSchema = new Schema({
     poll: {
         type: Schema.Types.ObjectId,
         ref: 'Poll'
-    }
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }]
 }, {
     timestamps: true
 });
