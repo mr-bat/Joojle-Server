@@ -1,7 +1,8 @@
 
 const possibleVotes = {
     ACCEPT: 'accept',
-    DECLINE: 'decline'
+    DECLINE: 'decline',
+    MAYBE: 'maybe'
 };
 
 

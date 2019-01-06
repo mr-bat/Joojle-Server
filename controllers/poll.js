@@ -54,6 +54,12 @@ const processVote = async (verdict, pollItem, voter, isNew) => {
         acceptCount: vote,
       }
     });
+  } else if (verdict === voteController.possibleVotes.MAYBE) {
+      await PollItem.update({_id: pollItem}, {
+          $inc: {
+              maybeCount: vote,
+          }
+      });
   }
 };
 
