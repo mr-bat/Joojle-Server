@@ -4,7 +4,7 @@ const check = async (startDate, endDate, user) => {
     let overlappingEvent = await Event.findOne({
         $and: [{
             state: 'Closed',
-            participants: user,
+            participants: {$all: [user]},
         }, {
             $or: [{
                 startDate: {$lte: startDate},
@@ -24,9 +24,11 @@ const check = async (startDate, endDate, user) => {
     });
     return overlappingEvent ? {
         success: true,
-        overlappingEvent
+        status: 'warning',
+        message: `You have an overlapping vote in ${overlappingEvent.title}`
     } : {
-        success: false
+        success: true,
+        status: 'success'
     };
 };
 
