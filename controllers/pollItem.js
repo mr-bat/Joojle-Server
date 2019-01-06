@@ -50,7 +50,28 @@ const comment = async (req, res, next) => {
     }
 };
 
+
+const fetch = async (req, res, next) => {
+    const {pollItemId} = req.body;
+
+    try {
+        let comments = await PollItem.findById(pollItemId).populate('comments');
+
+        res.send({
+            success: true,
+            comments
+        });
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
+};
+
+
 module.exports = {
     create,
-    comment
+    comment,
+    fetch
 };
