@@ -17,7 +17,7 @@ const create = async (req, res, next) => {
         let participants = await User.find({
             _id: {$in: e.participants}
         }, {_id: 0, email: 1});
-        await Mail.sendMail(poll, participants);
+        await Mail.sendVoteRequest(poll, participants);
         res.send({
             success: true,
             message: 'Poll has been successfully created.'
