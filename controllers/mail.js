@@ -11,27 +11,41 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.sendMail = (poll, recipients) => {
-    let transform = {'<>':'li','html':'${field_name} : ${value}'};
-    // let data = [
-    //     {'field_name':'agency name','value':order.agency.name},
-    //     {'field_name':'hotel name','value':order.hotel.name},
-    //     {'field_name':'Date','value':order.updatedAt},
-    //     {'field_name':'customer name','value':order.customer.firstName+' '+order.customer.lastName},
-    //     {'field_name':'reference ID','value':order.refId},
-    //     {'field_name':'price','value':order.price},
-    //     {'field_name': 'cancellation_penalty', 'value': (order.penalty) ? order.penalty : 0}
-    // ];
-    // let html = json2html.transform(data,transform);
+function sendMailHandler(recipients, subject, htmlBody) {
+
     let mailOptions = {
         from: '"Joojle" <reservation@cloudpms.ir>', // sender address (who sends)
         to: recipients, // list of receivers (who receives)
-        subject: 'New Poll!', // Subject line
-        // html: '<h3>New Poll :</h3>'+html
+        subject: subject,
+        html: htmlBody
     };
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
             return console.log(error);
         }
     });
+}
+
+
+exports.sendVoteRequest = (poll, recipients) => {
+    let html = '<p> please vote for your suitable time slot in this event.</p>';
+
+    sendMailHandler(
+        recipients,
+        poll.event.title + ' ' + 'event',
+        html
+    );
+};
+
+
+exports.sendFinalizedMail = (finalized_event) => {
+    let html = '<h3> Your time for voting on this event is up!</h3>' +
+        `<p>Event begins at ${finalized_event.startDate} until ${finalized_event.endDate}. </p>`;
+
+
+    sendMailHandler(
+        finalized_event.participants.map(p => p.email),
+        finalized_event.title + ' ' + 'event',
+        html
+    );
 };

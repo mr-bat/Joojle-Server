@@ -40,7 +40,7 @@ const create = async (req, res, next) => {
         }
 
         await PollItem.insertMany(pollItems);
-        await Mail.sendMail(poll, participants.map(p => p.email));
+        await Mail.sendVoteRequest(poll, participants.map(p => p.email));
 
         event.owner = req.User;
         res.send({
@@ -97,6 +97,10 @@ const close = async (req, res, next) => {
                 state: 'Closed'
             }
         });
+
+        let finalized_event = await Event.findOne({_id:eventId}).populate('participants');
+        await Mail.sendFinalizedMail(finalized_event);
+
         res.status(200).send({
             success: true,
             message: 'Event has been successfully finalized.'
@@ -104,7 +108,8 @@ const close = async (req, res, next) => {
     } catch (e) {
         res.status(500).send({
             success: false,
-            message: 'Internal server error.'
+            message: 'Internal server error.',
+            error: e.toString()
         });
     }
 };
