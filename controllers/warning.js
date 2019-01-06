@@ -27,7 +27,7 @@ const check = async (startDate, endDate, user) => {
         status: 'warning',
         message: `You have an overlapping vote in ${overlappingEvent.title}`
     } : {
-        success: true,
+        success: false,
         status: 'success'
     };
 };
