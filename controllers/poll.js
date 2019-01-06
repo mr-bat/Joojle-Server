@@ -89,8 +89,7 @@ const vote = async (req, res, next) => {
         res.send({
             success: true,
             message: 'Your vote has been updated',
-            status: 'success',
-            vote
+            status: 'success'
         });
     } catch (e) {
         console.log(e);
