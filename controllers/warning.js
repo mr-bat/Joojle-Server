@@ -4,7 +4,7 @@ const check = async (startDate, endDate, user) => {
     let overlappingEvent = await Event.findOne({
         $and: [{
             state: 'Closed',
-            participants: {$all: [user]},
+            participants: {$elemMatch: user._id},
         }, {
             $or: [{
                 startDate: {$lte: startDate},
