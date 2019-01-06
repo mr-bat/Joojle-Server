@@ -13,7 +13,7 @@ const signUp = async (req, res, next) => {
 
     try {
         await user.save();
-        res.redirect('http://localhost:9080/Login/index.html');
+        res.redirect('http://104.248.88.240/Login/index.html');
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -34,9 +34,9 @@ const signIn = async (req, res, next) => {
             }, "SuperSecret", {
                 expiresIn: "10d" // expires in 24 hours
             });
-            res.cookie('token', token).redirect('http://localhost:3001/hompage.html');
+            res.cookie('token', token).redirect('http://104.248.88.240/dashboard-simple/build/index.html');
         } else {
-            res.status(403).redirect('http://localhost:9080/Login/index.html');
+            res.status(403).redirect('http://104.248.88.240/Login/index.html');
         }
     } catch (e) {
         res.status(500).send({

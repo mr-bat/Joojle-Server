@@ -3,9 +3,10 @@ const Event = require('../models/Event');
 const check = async (startDate, endDate, user) => {
     let overlappingEvent = await Event.findOne({
         $and: [{
-            state: 'Closed',
-            participants: {$elemMatch: user._id},
-        }, {
+          owner: user._id,
+          state: 'Closed'
+        },
+          {
             $or: [{
                 startDate: {$lte: startDate},
                 endDate: {$gte: endDate}
@@ -22,6 +23,7 @@ const check = async (startDate, endDate, user) => {
             }]
         }]
     });
+    console.log(overlappingEvent);
     return overlappingEvent ? {
         success: true,
         status: 'warning',
