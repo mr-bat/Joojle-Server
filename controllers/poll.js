@@ -31,6 +31,31 @@ const create = async (req, res, next) => {
     }
 };
 
+const processVote = async (verdict, pollItem, voter, isNew) => {
+  let newVote = new Vote({
+    pollItem,
+    voter,
+    verdict
+  });
+  const vote = isNew ? 1: -1;
+  if (isNew) {
+    await newVote.save();
+  }
+  if (verdict === voteController.possibleVotes.DECLINE) {
+    await PollItem.update({_id: pollItem}, {
+      $inc: {
+        declineCount: vote,
+      }
+    });
+  } else if (verdict === voteController.possibleVotes.ACCEPT) {
+    await PollItem.update({_id: pollItem}, {
+      $inc: {
+        acceptCount: vote,
+      }
+    });
+  }
+};
+
 const vote = async (req, res, next) => {
     const verdict = req.body.verdict;
     const pollItem = req.body.pollItemId;
@@ -40,55 +65,22 @@ const vote = async (req, res, next) => {
 
     try {
 
+
         let previousVote = await Vote.findOne({
            pollItem, voter
         }).populate('pollItem');
-
-        if (previousVote === null) {
-            let newVote = new Vote({
-                pollItem,
-                voter,
-                verdict
-            });
-            await newVote.save();
-            if (verdict === voteController.possibleVotes.DECLINE) {
-                await PollItem.update({_id: pollItem}, {
-                    $inc: {
-                        declineCount: 1
-                    }
-                });
-            } else if (verdict === voteController.possibleVotes.ACCEPT) {
-                await PollItem.update({_id: pollItem}, {
-                    $inc: {
-                        acceptCount: 1
-                    }
-                });
+        if (!previousVote || previousVote.verdict !== verdict) {
+            if (previousVote) {
+                await processVote(previousVote.verdict, pollItem, voter, false);
+                await previousVote.remove();
             }
-
-        } else {
-            if (previousVote.verdict === voteController.possibleVotes.ACCEPT){
-                if (verdict === voteController.possibleVotes.DECLINE) {
-                    await PollItem.update({_id: pollItem}, {
-                        $inc: {
-                            acceptCount: -1,
-                            declineCount: 1
-                        }
-                    });
-                }
-            } else if(previousVote.verdict === voteController.possibleVotes.DECLINE) {
-                if (verdict === voteController.possibleVotes.ACCEPT) {
-                    await PollItem.update({_id: pollItem}, {
-                        $inc: {
-                            acceptCount: 1,
-                            declineCount: -1
-                        }
-                    });
-                }
-            }
+            await processVote(verdict, pollItem, voter, true);
         }
+
         res.send({
             success: true,
             message: 'Your vote has been updated',
+            status: 'success',
             vote
         });
     } catch (e) {
@@ -99,8 +91,6 @@ const vote = async (req, res, next) => {
         });
     }
 };
-
-
 
 module.exports = {
     create,
