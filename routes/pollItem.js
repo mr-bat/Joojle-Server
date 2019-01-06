@@ -4,6 +4,6 @@ const PollItem    = require('../controllers/pollItem');
 
 router.post('/', PollItem.create);
 router.post('/comment', PollItem.comment);
-router.get('/comment', PollItem.fetch);
+router.post('/comment/fetch', PollItem.fetch);
 
 module.exports = router;

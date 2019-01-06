@@ -12,6 +12,10 @@ let PollItemSchema = new Schema({
         type: Number,
         default: 0
     },
+    maybeCount: {
+        type: Number,
+        default: 0
+    },
     poll: {
         type: Schema.Types.ObjectId,
         ref: 'Poll'
