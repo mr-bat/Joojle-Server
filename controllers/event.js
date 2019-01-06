@@ -87,28 +87,51 @@ const read = async (req, res, next) => {
 };
 
 const close = async (req, res, next) => {
-    const eventId = req.body.eventId;
+    const { eventId, pollItemId } = req.body;
     try {
+        let pollItem = await PollItem.findById(pollItemId);
         await Event.updateOne({_id: eventId}, {
             $set: {
+                startDate: pollItem.startDate,
+                endDate: pollItem.endDate,
                 state: 'Closed'
             }
         });
         res.status(200).send({
             success: true,
             message: 'Event has been successfully finalized.'
-        })
+        });
     } catch (e) {
         res.status(500).send({
             success: false,
             message: 'Internal server error.'
         });
     }
+};
 
+const open = async (req, res, next) => {
+    const { eventId } = req.body;
+    try {
+        await Event.updateOne({_id: eventId}, {
+            $set: {
+                state: 'Open'
+            }
+        });
+        res.status(200).send({
+            success: true,
+            message: 'Event has been successfully opened.'
+        });
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Internal server error.'
+        });
+    }
 };
 
 module.exports = {
     create,
     read,
+    open,
     close
 };
