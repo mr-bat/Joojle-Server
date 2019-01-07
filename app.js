@@ -1,24 +1,9 @@
-const express = require('express');
-const path = require('path');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const mongoose          = require('mongoose');
-
-// const { Model } = require('objection');
-// const Knex = require('knex');
-
-// const knex = Knex({
-//   client: 'pg',
-//   connection: {
-//     host : 'manny.db.elephantsql.com',
-//     user : 'yolkyohh',
-//     password : 'sf1jiIoH41NTjGh6z1aaflOB4b09aJ5P',
-//     database : 'yolkyohh'
-//   }
-// });
-
-// Model.knex(knex);
+const express       = require('express');
+const path          = require('path');
+const logger        = require('morgan');
+const cookieParser  = require('cookie-parser');
+const bodyParser    = require('body-parser');
+const mongoose      = require('mongoose');
 
 const app = express();
 

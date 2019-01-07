@@ -6,6 +6,10 @@ let VoteSchema = new Schema({
     pollItem: {
         type: Schema.Types.ObjectId,
         ref: 'PollItem'
+    },
+    voter: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {
     timestamps: true

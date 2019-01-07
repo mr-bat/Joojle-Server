@@ -1,4 +1,6 @@
-const User = require('../../models/User');
+const jwtDecode = require('jwt-decode');
+const jwt       = require('jsonwebtoken');
+const User      = require('../models/User');
 
 const signUp = async (req, res, next) => {
     let username = req.body.username;
@@ -11,12 +13,9 @@ const signUp = async (req, res, next) => {
 
     try {
         await user.save();
-        res.send({
-            success: true,
-            message: 'User has been added successfully.',
-            user
-        });
+        res.redirect('http://104.248.88.240/Login/index.html');
     } catch (e) {
+        console.log(e);
         res.status(500).send({
             success: false,
             message: 'Internal server error.'
@@ -25,20 +24,19 @@ const signUp = async (req, res, next) => {
 };
 
 const signIn = async (req, res, next) => {
-    let username = req.body.username;
+    let email = req.body.email;
     try {
-        let user = await User.findOne({username});
+        let user = await User.findOne({email});
         // TODO: set cookie
         if(user) {
-            res.send({
-                success: true,
-                user
+            let token = jwt.sign({
+                uid: user._id.toString()
+            }, "SuperSecret", {
+                expiresIn: "10d" // expires in 24 hours
             });
+            res.cookie('token', token).redirect('http://104.248.88.240/dashboard-simple/build/index.html');
         } else {
-            res.status(404).send({
-                success: false,
-                message: 'User not found.'
-            })
+            res.status(403).redirect('http://104.248.88.240/Login/index.html');
         }
     } catch (e) {
         res.status(500).send({
